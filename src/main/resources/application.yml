@@ -1,0 +1,33 @@
+
+spring:
+  application:
+    name: billhostpro
+
+  datasource:
+    url: jdbc:mysql://82.25.105.67:3306/hotel_testbillhostpro
+    username: hotel_testbillhostpro
+    password: hotel_testbillhostpro
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+    show-sql: true
+
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
+
+server:
+  port: 8080
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+
+  swagger-ui:
+    path: /swagger-ui.html
+
+
