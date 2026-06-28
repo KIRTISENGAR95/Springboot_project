@@ -3,10 +3,12 @@
 package com.api.billhostpro.serviceimpl;
 
 import com.api.billhostpro.entity.ItemMaster;
+import com.api.billhostpro.exception.ResourceNotFoundException;
 import com.api.billhostpro.repository.ItemMasterRepository;
 import com.api.billhostpro.requestDTO.ItemMasterRequestDTO;
 import com.api.billhostpro.responseDTO.ItemMasterResponseDTO;
 import com.api.billhostpro.service.ItemMasterService;
+import com.api.billhostpro.utility.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -58,7 +60,7 @@ public class ItemMasterServiceImpl implements ItemMasterService {
         logger.info("Fetching Item : {}", id);
 
         ItemMaster item = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Item Not Found"));
+                .orElseThrow(() -> new ResourceNotFoundException(Constants.ITEM_NOT_FOUND));
 
         return mapToResponse(item);
     }
@@ -69,7 +71,7 @@ public class ItemMasterServiceImpl implements ItemMasterService {
         logger.info("Updating Item : {}", id);
 
         ItemMaster item = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Item Not Found"));
+                .orElseThrow(() -> new ResourceNotFoundException(Constants.ITEM_NOT_FOUND));
 
         item.setItemName(requestDTO.getItemName());
         item.setBarcode(requestDTO.getBarcode());
@@ -109,7 +111,7 @@ public class ItemMasterServiceImpl implements ItemMasterService {
         logger.info("Deleting Item : {}", id);
 
         ItemMaster item = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Item Not Found"));
+                .orElseThrow(() -> new ResourceNotFoundException(Constants.ITEM_NOT_FOUND));
 
         repository.delete(item);
 
@@ -181,3 +183,7 @@ public class ItemMasterServiceImpl implements ItemMasterService {
         return dto;
     }
 }
+
+
+
+
