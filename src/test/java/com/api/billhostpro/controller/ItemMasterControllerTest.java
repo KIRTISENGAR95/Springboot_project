@@ -58,7 +58,7 @@ class ItemMasterControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(id.toString()))
                 .andExpect(jsonPath("$.itemName").value("Paneer Tikka"))
-                .andExpect(jsonPath("$.barcode").value("BAR-100"))
+                .andExpect(jsonPath("$.barcode").value("BAR100"))
                 .andExpect(jsonPath("$.itemGroupName").value("Starters"))
                 .andExpect(jsonPath("$.favourite").value(true));
 
@@ -132,8 +132,8 @@ class ItemMasterControllerTest {
     private ItemMasterRequestDTO createRequestDTO(String itemName) {
         ItemMasterRequestDTO dto = new ItemMasterRequestDTO();
         dto.setItemName(itemName);
-        dto.setBarcode("BAR-100");
-        dto.setHsnCode("HSN-100");
+        dto.setBarcode("BAR100");
+        dto.setHsnCode("1001");
         dto.setItemGroupName("Starters");
         dto.setKitchenName("Main Kitchen");
         dto.setDishHeadName("Tandoor");
@@ -162,8 +162,8 @@ class ItemMasterControllerTest {
         ItemMasterResponseDTO dto = new ItemMasterResponseDTO();
         dto.setId(id);
         dto.setItemName(itemName);
-        dto.setBarcode("BAR-100");
-        dto.setHsnCode("HSN-100");
+        dto.setBarcode("BAR100");
+        dto.setHsnCode("1001");
         dto.setItemGroupName("Starters");
         dto.setKitchenName("Main Kitchen");
         dto.setDishHeadName("Tandoor");

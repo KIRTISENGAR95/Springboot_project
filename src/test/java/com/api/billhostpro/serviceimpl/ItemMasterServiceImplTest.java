@@ -165,8 +165,8 @@ class ItemMasterServiceImplTest {
     private ItemMasterRequestDTO createRequestDTO(String itemName) {
         ItemMasterRequestDTO dto = new ItemMasterRequestDTO();
         dto.setItemName(itemName);
-        dto.setBarcode("BAR-100");
-        dto.setHsnCode("HSN-100");
+        dto.setBarcode("BAR100");
+        dto.setHsnCode("1001");
         dto.setItemGroupName("Starters");
         dto.setKitchenName("Main Kitchen");
         dto.setDishHeadName("Tandoor");

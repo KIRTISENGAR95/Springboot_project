@@ -1,15 +1,31 @@
 package com.api.billhostpro.dto;
 
 import com.api.billhostpro.requestDTO.ItemMasterRequestDTO;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ItemMasterRequestDTOTest {
+
+    private static Validator validator;
+
+    @BeforeAll
+    static void setUpValidator() {
+        ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
+        validator = validatorFactory.getValidator();
+    }
 
     @Test
     void noArgsConstructorShouldCreateInstance() {
@@ -23,8 +39,8 @@ class ItemMasterRequestDTOTest {
         ItemMasterRequestDTO dto = createRequestDTO();
 
         assertEquals("Paneer Tikka", dto.getItemName());
-        assertEquals("BAR-100", dto.getBarcode());
-        assertEquals("HSN-100", dto.getHsnCode());
+        assertEquals("BAR100", dto.getBarcode());
+        assertEquals("1001", dto.getHsnCode());
         assertEquals("Starters", dto.getItemGroupName());
         assertEquals("Main Kitchen", dto.getKitchenName());
         assertEquals("Tandoor", dto.getDishHeadName());
@@ -62,11 +78,78 @@ class ItemMasterRequestDTOTest {
         assertNotEquals("Paneer Tikka", firstDTO);
     }
 
+    @Test
+    void validRequestDTOShouldPassValidation() {
+        ItemMasterRequestDTO dto = createRequestDTO();
+
+        Set<ConstraintViolation<ItemMasterRequestDTO>> violations =
+                validator.validate(dto);
+
+        assertTrue(violations.isEmpty());
+    }
+
+    @Test
+    void invalidBarcodeShouldFailValidation() {
+        ItemMasterRequestDTO dto = createRequestDTO();
+        dto.setBarcode("BAR-100");
+
+        Set<ConstraintViolation<ItemMasterRequestDTO>> violations =
+                validator.validate(dto);
+
+        assertFalse(violations.isEmpty());
+        assertTrue(hasMessage(
+                violations,
+                "Barcode must be alphanumeric and between 5 and 30 characters"
+        ));
+    }
+
+    @Test
+    void invalidHsnCodeShouldFailValidation() {
+        ItemMasterRequestDTO dto = createRequestDTO();
+        dto.setHsnCode("HSN-100");
+
+        Set<ConstraintViolation<ItemMasterRequestDTO>> violations =
+                validator.validate(dto);
+
+        assertFalse(violations.isEmpty());
+        assertTrue(hasMessage(
+                violations,
+                "HSN Code must contain only digits and be between 4 and 8 characters"
+        ));
+    }
+
+    @Test
+    void outOfRangeRateShouldFailValidation() {
+        ItemMasterRequestDTO dto = createRequestDTO();
+        dto.setDineInRate(BigDecimal.valueOf(1000000));
+
+        Set<ConstraintViolation<ItemMasterRequestDTO>> violations =
+                validator.validate(dto);
+
+        assertFalse(violations.isEmpty());
+        assertTrue(hasMessage(
+                violations,
+                "Dine In Rate cannot be greater than 999999.99"
+        ));
+    }
+
+    @Test
+    void blankItemNameShouldFailValidation() {
+        ItemMasterRequestDTO dto = createRequestDTO();
+        dto.setItemName("   ");
+
+        Set<ConstraintViolation<ItemMasterRequestDTO>> violations =
+                validator.validate(dto);
+
+        assertFalse(violations.isEmpty());
+        assertTrue(hasMessage(violations, "Item Name is required"));
+    }
+
     private ItemMasterRequestDTO createRequestDTO() {
         ItemMasterRequestDTO dto = new ItemMasterRequestDTO();
         dto.setItemName("Paneer Tikka");
-        dto.setBarcode("BAR-100");
-        dto.setHsnCode("HSN-100");
+        dto.setBarcode("BAR100");
+        dto.setHsnCode("1001");
         dto.setItemGroupName("Starters");
         dto.setKitchenName("Main Kitchen");
         dto.setDishHeadName("Tandoor");
@@ -89,5 +172,12 @@ class ItemMasterRequestDTOTest {
         dto.setKitchenStock(Boolean.TRUE);
         dto.setVeg(Boolean.TRUE);
         return dto;
+    }
+
+    private boolean hasMessage(
+            Set<ConstraintViolation<ItemMasterRequestDTO>> violations,
+            String message) {
+        return violations.stream()
+                .anyMatch(violation -> message.equals(violation.getMessage()));
     }
 }
